@@ -6,7 +6,7 @@
 use strict;
 use warnings;
 
-use Getopt::Long;
+use Getopt::Long qw(:config bundling no_ignore_case);
 use POSIX qw(ceil);
 
 my %Opts = (
