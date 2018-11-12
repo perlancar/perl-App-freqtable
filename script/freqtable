@@ -168,7 +168,140 @@ run();
  freqtable [OPTIONS] < INPUT
 
 
+=head1 SYNOPSIS
+
+Sample input:
+
+ % cat input-lines.txt
+ one
+ one
+ two
+ three
+ four
+ five
+ five
+ five
+ six
+ seven
+ eight
+ eight
+ nine
+
+ % cat input-words.txt
+ one one two three four five five five six seven eight eight nine
+
+ % cat input-nums.txt
+ 9.99 cents
+ 9.99 dollars
+ 9 cents
+
+=head2 Modes
+
+Display frequency table (by default: lines):
+
+ % freqtable input-lines.txt
+ 3       five
+ 2       eight
+ 2       one
+ 1       four
+ 1       nine
+ 1       seven
+ 1       six
+ 1       three
+ 1       two
+
+Display frequency table (words):
+
+ % freqtable -w input-words.txt
+ 3       five
+ 2       eight
+ 2       one
+ 1       four
+ 1       nine
+ 1       seven
+ 1       six
+ 1       three
+ 1       two
+
+Display frequency table (characters):
+
+ % freqtable -c input-words.txt
+ 12
+ 12      e
+  7      i
+  5      n
+  4      f
+  4      o
+  4      t
+  4      v
+  3      h
+  2      g
+  2      r
+  2      s
+  1
+
+  1      u
+  1      w
+  1      x
+
+Display frequency table (nums):
+
+ % freqtable -n input-nums.txt
+ 2      9.99
+ 1      9
+
+Display frequency table (integers):
+
+ % freqtable -i input-nums.txt
+ 3      9
+
+=head2 -F option
+
+Don't display the frequencies:
+
+ % freqtable -F input-lines.txt
+ five
+ eight
+ one
+ four
+ nine
+ seven
+ six
+ three
+ two
+
+=head2 Filter by frequencies
+
+Only display lines that appear three times:
+
+ % freqtable -F input-lines.txt --freq 3
+ 3       five
+
+Only display lines that appear more than once:
+
+ % freqtable -F input-lines.txt --freq 2-
+ 3       five
+ 2       eight
+ 2       one
+
+Only display lines that appear less than three times:
+
+ % freqtable -F input-lines.txt --freq -2
+ 2       eight
+ 2       one
+ 1       four
+ 1       nine
+ 1       seven
+ 1       six
+ 1       three
+ 1       two
+
+
 =head1 DESCRIPTION
+
+This utility counts the occurences of lines (or words/characters) in the input
+then display each unique lines along with their number of occurrences. You can
+also instruct it to only show lines that have a specified number of occurrences.
 
 
 =head1 OPTIONS
@@ -185,9 +318,37 @@ run();
 
 =item * --number, -n
 
+Treat each line as a number. A line like this:
+
+ 9.99 cents
+
+will be regarded as:
+
+ 9.99
+
 =item * --integer, -i
 
+Treat each line as an integer. A line like this:
+
+ 9.99 cents
+
+will be regarded as:
+
+ 9
+
 =item * --ignore-case, -f
+
+=item * --no-print-freq, -F
+
+Will not print the frequencies.
+
+=item * --freq=s
+
+Filter by frequencies. C<N> (e.g. --freq 5) means only display items that occur
+N times. C<M-N> (e.g. --freq 5-10) means only display items that occur between M
+and N times. C<M-> (e.g. --freq 5-) means only display items that occur at least
+M times. C<-N> (e.g. --freq -10) means only display items that occur at most N
+times.
 
 =back
 
