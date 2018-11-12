@@ -9,10 +9,14 @@ use warnings;
 use Getopt::Long qw(:config bundling no_ignore_case);
 use POSIX qw(ceil);
 
+my $tmp_freq;
 my %Opts = (
     mode => 'line',
     ignore_case => 0,
+    print_freq => 1,
     # XXX options to limit memory usage, e.g. max keys, max line length, --md5 (like in nauniq), ...
+    min_freq => undef,
+    max_freq => undef,
 );
 
 sub parse_cmdline {
@@ -24,6 +28,9 @@ sub parse_cmdline {
         'number|n'  => sub { $Opts{mode} = 'number' },
         'integer|i' => sub { $Opts{mode} = 'integer' },
         'ignore-case|f' => \$Opts{ignore_case},
+        'no-print-freq|F' => sub { $Opts{print_freq} = 0 },
+        'print-freq'      => sub { $Opts{print_freq} = 1 },
+        'freq=s'    => \$tmp_freq,
         'help|h'  => sub {
             print <<USAGE;
 Usage:
@@ -37,11 +44,31 @@ Options:
   --number, -n
   --integer, -i
   --ignore-case, -f
+  --no-print-freq, -F
+  --freq N|M-N|M-|-N
 For more details, see the manpage/documentation.
 USAGE
             exit 0;
         },
     );
+
+    if (defined $tmp_freq) {
+        if ($tmp_freq =~ /\A\d+\z/) {
+            $Opts{min_freq} = $Opts{max_freq} = $tmp_freq;
+        } elsif ($tmp_freq =~ /\A-(\d+)\z/) {
+            $Opts{max_freq} = $1;
+        } elsif ($tmp_freq =~ /\A(\d+)-\z/) {
+            $Opts{min_freq} = $1;
+        } elsif ($tmp_freq =~ /\A(\d+)-(\d+)\z/) {
+            $Opts{min_freq} = $1;
+            $Opts{max_freq} = $2;
+        } else {
+            warn "freqtable: Invalid value for --freq: '$tmp_freq', ".
+                "please specify N|M-N|M-|-N\n";
+            $res = 0;
+        }
+    }
+
     exit 99 if !$res;
 }
 
@@ -114,10 +141,16 @@ sub run {
             ($numeric ? $a <=> $b : $a cmp $b)
     } keys %occurences) {
         my $n = $occurences{$k};
-        unless (defined $fmt) {
-            $fmt = "%" . ceil(log($n)/log(10)) . "s\t%s\n";
+        next if defined $Opts{min_freq} && $n < $Opts{min_freq};
+        next if defined $Opts{max_freq} && $n > $Opts{max_freq};
+        if ($Opts{print_freq}) {
+            unless (defined $fmt) {
+                $fmt = "%" . ceil(log($n)/log(10)) . "s\t%s\n";
+            }
+            printf $fmt, $n, $k;
+        } else {
+            print $k, "\n";
         }
-        printf $fmt, $n, $k;
     }
 }
 
