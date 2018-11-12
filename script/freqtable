@@ -165,10 +165,7 @@ run();
 
 =head1 SYNOPSIS
 
- freqtable [OPTIONS] < INPUT
-
-
-=head1 SYNOPSIS
+ % freqtable [OPTIONS] < INPUT
 
 Sample input:
 
