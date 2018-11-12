@@ -46,32 +46,42 @@ USAGE
 }
 
 sub run {
-    my $fh = select();
-
     my %occurences;
     my $numeric;
 
     if ($Opts{mode} eq 'byte' || $Opts{mode} eq 'char') {
-        if ($Opts{mode} eq 'byte') {
-            binmode $fh, ":encoding(bytes)";
-        } else {
-            binmode $fh, ":encoding(utf8)";
-        }
-        while (1) {
-            read $fh, my $block, 4096;
-            last if !length $block;
-            for (split //, $block) {
-                if ($Opts{ignore_case}) {
-                    $occurences{lc $_}++;
-                } else {
-                    $occurences{$_}++;
+        @ARGV = (\*STDIN) unless @ARGV;
+        for my $fn (@ARGV) {
+            my $fh;
+            if (ref $fn) {
+                $fh = $fn;
+            } else {
+                open $fh, "<", $fn or do {
+                    warn "freqtable: Can't open '$fn': $!\n";
+                    next;
+                };
+            }
+            if ($Opts{mode} eq 'byte') {
+                binmode $fh;
+            } else {
+                binmode $fh, ":encoding(utf8)";
+            }
+            while (1) {
+                read $fh, my $block, 4096;
+                last if !length $block;
+                for (split //, $block) {
+                    if ($Opts{ignore_case}) {
+                        $occurences{lc $_}++;
+                    } else {
+                        $occurences{$_}++;
+                    }
                 }
             }
-        }
+        } # fn
     } elsif ($Opts{mode} eq 'word') {
         while (defined(my $line = <>)) {
             chomp $line;
-            while (my $line =~ /(\w+)/g) {
+            while ($line =~ /(\w+)/g) {
                 if ($Opts{ignore_case}) {
                     $occurences{lc $1}++;
                 } else {
@@ -95,7 +105,7 @@ sub run {
             $occurences{$num}++;
         }
     } else {
-        die "BUG: Unknown mode '$Opts{mode}'";
+        die "freqtable: BUG: Unknown mode '$Opts{mode}'";
     }
 
     my $fmt;
