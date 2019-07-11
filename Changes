@@ -1,4 +1,4 @@
-0.002   2018-11-12 (PERLANCAR)
+0.002   2018-11-12  Released-By: PERLANCAR
 
 	- Add options --no-print-freq (-F) and --freq.
 
@@ -7,6 +7,6 @@
 	- [doc] Add examples in Synopsis.
 
 
-0.001   2018-07-07 (PERLANCAR)
+0.001   2018-07-07  Released-By: PERLANCAR
 
         - First release.
