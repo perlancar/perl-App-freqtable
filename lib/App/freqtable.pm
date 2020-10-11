@@ -1,5 +1,8 @@
 package App::freqtable;
 
+# AUTHORITY
+# DATE
+# DIST
 # VERSION
 
 1;
@@ -8,5 +11,10 @@ package App::freqtable;
 =head1 SYNOPSIS
 
 See the command-line script L<freqtable>.
+
+
+=head1 SEE ALSO
+
+L<wordstat> from L<App::wordstat>
 
 =cut
