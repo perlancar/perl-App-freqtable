@@ -300,6 +300,14 @@ This utility counts the occurences of lines (or words/characters) in the input
 then display each unique lines along with their number of occurrences. You can
 also instruct it to only show lines that have a specified number of occurrences.
 
+You can use the following Unix command to count occurences of lines:
+
+ % sort input-lines.txt | uniq -c | sort -nr
+
+and with a bit more work you can also use a combination of existing Unix
+commands to count occurrences of words/characters, as well as filter items that
+have a specified number of occurrences; freqtable basically offers convenience.
+
 
 =head1 OPTIONS
 
@@ -364,6 +372,6 @@ times.
 
 =head1 SEE ALSO
 
-B<wc>
+Unix commands B<wc>, B<sort>, B<uniq>
 
 =cut
