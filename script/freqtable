@@ -1,13 +1,15 @@
 #!perl
 
-# DATE
-# VERSION
-
 use strict;
 use warnings;
 
 use Getopt::Long qw(:config bundling no_ignore_case);
 use POSIX qw(ceil);
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
 
 my $tmp_freq;
 my %Opts = (
@@ -364,6 +366,10 @@ times.
 
 =head1 SEE ALSO
 
-B<wc>
+B<wc> Unix utility
+
+L<wordstat> from L<App::wordstat>
+
+L<csv-freqtable> from L<App::CSVUtils>
 
 =cut

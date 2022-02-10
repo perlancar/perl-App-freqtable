@@ -1,5 +1,7 @@
 package App::freqtable;
 
+use strict;
+
 # AUTHORITY
 # DATE
 # DIST
@@ -16,5 +18,7 @@ See the command-line script L<freqtable>.
 =head1 SEE ALSO
 
 L<wordstat> from L<App::wordstat>
+
+L<csv-freqtable> from L<App::CSVUtils>
 
 =cut
