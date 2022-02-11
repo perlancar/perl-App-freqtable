@@ -1,8 +1,16 @@
-0.004   2022-02-10  Released-By: PERLANCAR; Urgency: low
+0.004.2 2022-02-10  Released-By: PERLANCAR; Urgency: low
 
 	- No functional changes.
 
         - [doc] Mention csv-freqtable.
+
+        - UPDATE: rename release from 0.004 to 0.004.2 due to conflict.
+
+
+0.004   2020-10-19  Released-By: PERLANCAR; Urgency: medium
+
+	- [doc] Show how to do the same task using Unix commands uniq &
+	  sort.
 
 
 0.003   2020-10-11  Released-By: PERLANCAR; Urgency: low
