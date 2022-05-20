@@ -19,6 +19,8 @@ my %Opts = (
     # XXX options to limit memory usage, e.g. max keys, max line length, --md5 (like in nauniq), ...
     min_freq => undef,
     max_freq => undef,
+    sort_args => {},
+    sort_sub => undef,
 );
 
 sub parse_cmdline {
@@ -33,6 +35,8 @@ sub parse_cmdline {
         'no-print-freq|F' => sub { $Opts{print_freq} = 0 },
         'print-freq'      => sub { $Opts{print_freq} = 1 },
         'freq=s'    => \$tmp_freq,
+        'sort-sub=s' => \$Opts{sort_sub},
+        'sort-arg=s%' => $Opts{sort_args},
         'help|h'  => sub {
             print <<USAGE;
 Usage:
@@ -48,6 +52,8 @@ Options:
   --ignore-case, -f
   --no-print-freq, -F
   --freq N|M-N|M-|-N
+  --sort-sub=SPEC
+  --sort-arg=ARG=VAL
 For more details, see the manpage/documentation.
 USAGE
             exit 0;
@@ -138,10 +144,19 @@ sub run {
     }
 
     my $fmt;
-    for my $k (sort {
+    my @keys = keys %occurences;
+    if (defined $Opts{sort_sub}) {
+        require Sort::Sub;
+        my $sorter = Sort::Sub::get_sorter($Opts{sort_sub}, $Opts{sort_args});
+        @keys = sort $sorter @keys;
+    } else {
+        @keys = sort {
         $occurences{$b} <=> $occurences{$a} ||
             ($numeric ? $a <=> $b : $a cmp $b)
-    } keys %occurences) {
+        } @keys;
+    }
+
+    for my $k (@keys) {
         my $n = $occurences{$k};
         next if defined $Opts{min_freq} && $n < $Opts{min_freq};
         next if defined $Opts{max_freq} && $n > $Opts{max_freq};
@@ -294,6 +309,48 @@ Only display lines that appear less than three times:
  1       six
  1       three
  1       two
+
+=head2 Sorting
+
+Instead of the default sorting by frequency (descending order), if you specify
+C<--sort-sub> (and optionally one or more C<--sort-arg>) you can sort by the
+keys using one of L<Sort::Sub>::* subroutines. Examples:
+
+ # sort by keys, asciibetically
+ % freqtable -F input-lines.txt --sort-sub asciibetically
+ 2       eight
+ 3       five
+ 1       four
+ 1       nine
+ 2       one
+ 1       seven
+ 1       six
+ 1       three
+ 1       two
+
+ # sort by keys, asciibetically (descending order)
+ % freqtable -F input-lines.txt --sort-sub 'asciibetically<r>'
+ 1       two
+ 1       three
+ 1       six
+ 1       seven
+ 2       one
+ 1       nine
+ 1       four
+ 3       five
+ 2       eight
+
+ # sort by keys, randomly using perl code (essentially, shuffling)
+ % freqtable -F input-lines.txt --sort-sub 'by_perl_code' --sort-arg 'code=int(rand()*3)-1'
+ 3       five
+ 1       three
+ 2       eight
+ 1       seven
+ 2       one
+ 1       six
+ 1       nine
+ 1       two
+ 1       four
 
 
 =head1 DESCRIPTION
