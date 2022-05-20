@@ -416,6 +416,32 @@ and N times. C<M-> (e.g. --freq 5-) means only display items that occur at least
 M times. C<-N> (e.g. --freq -10) means only display items that occur at most N
 times.
 
+=item * --sort-sub=s
+
+This will cause C<freqtable> to sort by key name instead of by frequencies. You
+pass this option to specify a L<Sort::Sub> routine, which is the name of a
+C<Sort::Sub::*> module without the C<Sort::Sub::> prefix, e.g.
+C<asciibetically>. The name can optionally be followed by C<< <i> >>, or C<< <r>
+>>, or C<< <ir> >> to mean case-insensitive sorting, reverse order, and reverse
+order case-insensitive sorting, respectively. When you use one of these suffixes
+on the command-line, remember to quote since C<< < >> and C<< > >> can be
+intereprted by shell.
+
+Examples:
+
+ asciibetically
+ asciibetically<i>
+ by_length<r>
+
+=item * --sort-arg=ARGNAME=ARGVALUE
+
+Pass argument(s) to the sort subroutine. Can be specified multiple times, once
+for every argument.
+
+=item * -a
+
+Shortcut for C<--sort=asciibetically>.
+
 =back
 
 
