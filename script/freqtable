@@ -37,6 +37,7 @@ sub parse_cmdline {
         'freq=s'    => \$tmp_freq,
         'sort-sub=s' => \$Opts{sort_sub},
         'sort-arg=s%' => $Opts{sort_args},
+        'a'   => sub { $Opts{sort_sub} = 'asciibetically' },
         'help|h'  => sub {
             print <<USAGE;
 Usage:
@@ -54,6 +55,7 @@ Options:
   --freq N|M-N|M-|-N
   --sort-sub=SPEC
   --sort-arg=ARG=VAL
+  -a
 For more details, see the manpage/documentation.
 USAGE
             exit 0;
