@@ -1,3 +1,10 @@
+0.007   2022-05-20  Released-By: PERLANCAR; Urgency: medium
+
+        - [ux] Add -a as shortcut for --sort=asciibetically.
+
+        - [doc] Forgot to document --sort-sub, --sort-arg, and -a.
+
+
 0.006   2022-05-20  Released-By: PERLANCAR; Urgency: medium
 
         - Add options: --sort-sub, --sort-arg.
