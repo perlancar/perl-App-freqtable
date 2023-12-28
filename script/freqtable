@@ -174,7 +174,7 @@ sub run {
             if ($Opts{percent}) {
                 $n = $totoccurrences == 0 ? 0 : $n/$totoccurrences*100;
                 unless (defined $fmt) {
-                    $fmt = "%5.2s%%\t%s\n";
+                    $fmt = "%5.2f%%\t%s\n";
                 }
             } else {
                 unless (defined $fmt) {
