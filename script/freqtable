@@ -21,6 +21,7 @@ my %Opts = (
     max_freq => undef,
     sort_args => {},
     sort_sub => undef,
+    percent => 0,
 );
 
 sub parse_cmdline {
@@ -38,6 +39,7 @@ sub parse_cmdline {
         'sort-sub=s' => \$Opts{sort_sub},
         'sort-arg=s%' => $Opts{sort_args},
         'a'   => sub { $Opts{sort_sub} = 'asciibetically' },
+        'percent|p' => sub { $Opts{percent} = 1 },
         'help|h'  => sub {
             print <<USAGE;
 Usage:
@@ -56,6 +58,7 @@ Options:
   --sort-sub=SPEC
   --sort-arg=ARG=VAL
   -a
+  --percent, -p
 For more details, see the manpage/documentation.
 USAGE
             exit 0;
@@ -147,6 +150,9 @@ sub run {
 
     my $fmt;
     my @keys = keys %occurences;
+    my $totoccurrences = 0;
+    $totoccurrences += $occurences{$_} for @keys;
+
     if (defined $Opts{sort_sub}) {
         require Sort::Sub;
         my $sorter = Sort::Sub::get_sorter($Opts{sort_sub}, $Opts{sort_args});
@@ -158,13 +164,22 @@ sub run {
         } @keys;
     }
 
+    my $sum;
+
     for my $k (@keys) {
         my $n = $occurences{$k};
         next if defined $Opts{min_freq} && $n < $Opts{min_freq};
         next if defined $Opts{max_freq} && $n > $Opts{max_freq};
         if ($Opts{print_freq}) {
-            unless (defined $fmt) {
-                $fmt = "%" . ceil(log($n)/log(10)) . "s\t%s\n";
+            if ($Opts{percent}) {
+                $n = $totoccurrences == 0 ? 0 : $n/$totoccurrences*100;
+                unless (defined $fmt) {
+                    $fmt = "%5.2s%%\t%s\n";
+                }
+            } else {
+                unless (defined $fmt) {
+                    $fmt = "%" . ceil(log($n)/log(10)) . "s\t%s\n";
+                }
             }
             printf $fmt, $n, $k;
         } else {
@@ -441,6 +456,10 @@ for every argument.
 =item * -a
 
 Shortcut for C<--sort=asciibetically>.
+
+=item * --percent, -p
+
+Show frequencies as percentages.
 
 =back
 
