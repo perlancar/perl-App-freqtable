@@ -28,7 +28,6 @@ my %Opts = (
 );
 my $Numeric;
 my %Occurences;
-my $Fmt;
 
 sub parse_cmdline {
     my $res = GetOptions(
@@ -48,6 +47,7 @@ sub parse_cmdline {
         'sort-arg=s%' => $Opts{sort_args},
         'a'   => sub { $Opts{sort_sub} = 'asciibetically' },
         'percent|p' => sub { $Opts{percent} = 1 },
+        'print-percent' => sub { $Opts{print_percent} = 1; $Opts{percent} = 1 },
         'clear-before-output' => sub { $Opts{clear_before_output} = 1 },
         'output-every=i' => \$Opts{output_every},
         'help|h'  => sub {
@@ -63,7 +63,11 @@ Options:
   --number, -n
   --integer, -i
   --ignore-case, -f
+  --print-freq
   --no-print-freq, -F
+  --print-percent
+  --print-total, -t
+  --no-print-total, -T
   --freq N|M-N|M-|-N
   --sort-sub=SPEC
   --sort-arg=ARG=VAL
@@ -100,21 +104,14 @@ USAGE
 sub _print_freqline {
     my ($n, $k, $totoccurrences) = @_;
 
-    if ($Opts{print_freq}) {
-        if ($Opts{percent}) {
-            $n = $totoccurrences == 0 ? 0 : $n/$totoccurrences*100;
-            unless (defined $Fmt) {
-                $Fmt = "%5.2f%%\t%s\n";
-            }
-        } else {
-            unless (defined $Fmt) {
-                $Fmt = "%" . ceil(log($n)/log(10)) . "s\t%s\n";
-            }
-        }
-        printf $Fmt, $n, $k;
-    } else {
-        print $k, "\n";
+    if ($Opts{print_freq} || $Opts{print_percent}) {
+        printf "%9d ", $n;
     }
+    if ($Opts{print_freq} && $Opts{percent}) {
+        my $pct = $totoccurrences == 0 ? 0 : $n/$totoccurrences*100;
+        printf "%6.2f%% ", $pct;
+    }
+    print $k, "\n";
 }
 
 sub _display_table {
@@ -496,6 +493,10 @@ for every argument.
 =item * -a
 
 Shortcut for C<--sort=asciibetically>.
+
+=item * --print-percent
+
+Also print percentages as well as frequencies.
 
 =item * --percent, -p
 
